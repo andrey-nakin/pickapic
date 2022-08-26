@@ -15,5 +15,6 @@ setup(
     platforms='any',
     classifiers=[
         'Programming Language :: Python'
-    ]
+    ],
+    scripts=['pickapic/__main__.py']
 )
