@@ -2,7 +2,7 @@ import argparse
 
 
 def get_parser():
-    parser = argparse.ArgumentParser("ae.py")
+    parser = argparse.ArgumentParser("pickapic")
     parser.add_argument("--version", "-v", action="store_true", help="Show version")
     parser.add_argument("--config", "-c", help="Path to configuration database file (default: pickapic.db)",
                         default="pickapic.db")
