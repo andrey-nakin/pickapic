@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.8"
 argparse = "^1.4.0"
+caribou = "^0.3.0"
 
 [tool.poetry.scripts]
 pickapic = "pickapic.main:pickapic"
