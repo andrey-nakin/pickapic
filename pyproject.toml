@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pickapic"
 version = "0.1.0"
-description = ""
+description = "A command line tool that downloads a random photo from a public image hosting."
 authors = ["Andrey Nakin <andrey.nakin@gmail.com>"]
 readme = "README.md"
 
@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.8"
 argparse = "^1.4.0"
 
+[tool.poetry.scripts]
+pickapic = "pickapic.main:pickapic"
 
 [build-system]
 requires = ["poetry-core"]
