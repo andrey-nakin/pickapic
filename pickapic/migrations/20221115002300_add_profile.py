@@ -1,5 +1,4 @@
 def upgrade(connection):
-    # connection is a plain old sqlite3 database connection
     sql = """
         CREATE TABLE profile
         ( 
