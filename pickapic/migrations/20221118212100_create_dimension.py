@@ -1,10 +1,10 @@
 def upgrade(connection):
     sql = """
-        CREATE TABLE min_dimension
+        CREATE TABLE dimension
         ( 
             profile_id INTEGER NOT NULL,
-            width      INTEGER NOT NULL,
-            height     INTEGER NOT NULL,
+            min_width  INTEGER NOT NULL DEFAULT 0,
+            min_height INTEGER NOT NULL DEFAULT 0,
             FOREIGN KEY(profile_id) REFERENCES profile(id)
         ) 
         """

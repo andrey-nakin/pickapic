@@ -6,6 +6,10 @@ from .profile import list_profiles
 from .tag import add_tags
 from .tag import remove_tags
 from .tag import list_tags
+from .dimension import get_min_width
+from .dimension import set_min_width
+from .dimension import set_min_height
+from .dimension import get_min_height
 import caribou
 import os
 
@@ -41,3 +45,12 @@ def pickapic():
         remove_tags(context, args.remove_stop_tags, True)
     if args.list_stop_tags:
         list_tags(context, True)
+
+    if args.get_min_width:
+        get_min_width(context)
+    if args.set_min_width:
+        set_min_width(context, args.set_min_width)
+    if args.get_min_height:
+        get_min_height(context)
+    if args.set_min_height:
+        set_min_height(context, args.set_min_height)

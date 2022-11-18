@@ -26,10 +26,14 @@ def get_parser():
     parser.add_argument("--list-stop-tags", dest='list_stop_tags', action="store_true",
                         help="List current profile's black list tags")
 
-    parser.add_argument("--get-min-width", help="Get current profile's minimal image width")
-    parser.add_argument("--set-min-width", type=int, help="Set current profile's minimal image width")
-    parser.add_argument("--get-min-height", help="Set current profile's minimal image height")
-    parser.add_argument("--set-min-height", type=int, help="Set current profile's minimal image height")
+    parser.add_argument("--get-min-width", dest='get_min_width', action="store_true",
+                        help="Get current profile's minimal image width")
+    parser.add_argument("--set-min-width", metavar='<min width>', dest='set_min_width', type=int,
+                        help="Set current profile's minimal image width")
+    parser.add_argument("--get-min-height", dest='get_min_height', action="store_true",
+                        help="Set current profile's minimal image height")
+    parser.add_argument("--set-min-height", metavar='<min height>', dest='set_min_height', type=int,
+                        help="Set current profile's minimal image height")
 
     parser.add_argument("--image-number", "-n", type=int, help="Number of images to download")
     parser.add_argument("--dest-dir", "-d", help="Destination directory", default=".")
