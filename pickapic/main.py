@@ -14,4 +14,7 @@ def pickapic():
     # upgrade to most recent version
     caribou.upgrade(args.config, os.path.join(os.path.abspath(os.path.dirname(__file__)), 'migrations'))
 
-    ctx = Context(args)
+    context = Context(args)
+
+    if args.create_profile:
+        create_profile(context, args.create_profile)

@@ -1,9 +1,9 @@
 from .utils import panic
 
 
-def create_profile(context):
-    profile_name = "global"
-    parent_name = None
+def create_profile(context, args):
+    profile_name = args[0]
+    parent_name = args[1] if len(args) > 1 else None
 
     if find_profile_id_by_name(context, profile_name) is not None:
         panic("Profile already exists: " + profile_name)
@@ -19,6 +19,8 @@ def create_profile(context):
     conn.commit()
     profile_id = cur.lastrowid
     conn.close()
+
+    print("Profile created:", profile_name)
 
     return profile_id
 

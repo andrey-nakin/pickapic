@@ -6,9 +6,10 @@ def get_parser():
     parser.add_argument("--version", "-v", action="store_true", help="Show version")
     parser.add_argument("--config", "-c", help="Path to configuration database file (default: pickapic.db)",
                         default="pickapic.db")
-    parser.add_argument("--profile", "-p", help="Profile to use")
+    parser.add_argument("--profile", "-p", metavar='<profile>', help="Profile to use")
 
-    parser.add_argument("--create-profile", nargs='*', metavar=('profile', 'parent'), help="Create new profile")
+    parser.add_argument("--create-profile", nargs='*', metavar=('<profile>', '<parent profile>'), dest='create_profile',
+                        help="Create new profile")
     parser.add_argument("--delete-profile", help="Delete existing profile")
 
     parser.add_argument("--add-tag", nargs='?', metavar=('tag'), help="Add search tag to profile")
@@ -20,11 +21,11 @@ def get_parser():
     parser.add_argument("--list-stop-tags", action="store_true", help="List profile's black list tags")
 
     parser.add_argument("--get-min-width", help="Get profile's minimal image width")
-    parser.add_argument("--set-min-width", help="Set profile's minimal image width")
+    parser.add_argument("--set-min-width", type=int, help="Set profile's minimal image width")
     parser.add_argument("--get-min-height", help="Set profile's minimal image height")
-    parser.add_argument("--set-min-height", help="Set profile's minimal image height")
+    parser.add_argument("--set-min-height", type=int, help="Set profile's minimal image height")
 
-    parser.add_argument("--image-number", "-n", help="Number of images to download")
+    parser.add_argument("--image-number", "-n", type=int, help="Number of images to download")
     parser.add_argument("--dest-dir", "-d", help="Destination directory", default=".")
 
     return parser
