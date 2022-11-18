@@ -11,6 +11,7 @@ def get_parser():
     parser.add_argument("--create-profile", nargs='*', metavar=('<profile>', '<parent profile>'), dest='create_profile',
                         help="Create new profile")
     parser.add_argument("--delete-profile", metavar='<profile>', dest='delete_profile', help="Delete existing profile")
+    parser.add_argument("--list-profiles", dest='list_profiles', action="store_true", help="List all profiles")
 
     parser.add_argument("--add-tag", nargs='+', metavar='<tag>', dest='add_tags',
                         help="Add search tag(s) to current profile")

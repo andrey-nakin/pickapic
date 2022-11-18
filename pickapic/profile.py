@@ -66,3 +66,24 @@ def delete_profile(context, profile_name):
     print("Profile deleted:", profile_name)
 
     return profile_id
+
+
+def list_profiles(context):
+    conn = context.connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT profile.name, p2.name 
+        FROM profile 
+        LEFT OUTER JOIN profile p2 ON p2.id = profile.parent_id 
+        ORDER BY profile.name
+        """)
+    conn.commit()
+
+    rows = cur.fetchall()
+    print("Name Parent")
+    print("===========")
+    for row in rows:
+        print(row[0], row[1])
+
+    conn.close()

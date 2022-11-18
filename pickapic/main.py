@@ -2,6 +2,7 @@ from .cliapi import parse_args
 from .context import Context
 from .profile import create_profile
 from .profile import delete_profile
+from .profile import list_profiles
 from .tag import add_tags
 from .tag import remove_tags
 from .tag import list_tags
@@ -24,6 +25,8 @@ def pickapic():
         create_profile(context, args.create_profile)
     if args.delete_profile:
         delete_profile(context, args.delete_profile)
+    if args.list_profiles:
+        list_profiles(context)
 
     if args.add_tags:
         add_tags(context, args.add_tags, False)
