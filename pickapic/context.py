@@ -1,4 +1,5 @@
 import sqlite3
+from .profile import find_profile_id_by_name
 
 
 class Context:
@@ -13,6 +14,8 @@ class Context:
     def profile_id(self):
         if self.cached_profile_id is None:
             assert self.args.profile is not None
+
+            self.cached_profile_id = find_profile_id_by_name(self, self.args.profile, True)
 
             conn = self.connection()
             cur = conn.cursor()

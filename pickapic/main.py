@@ -1,5 +1,6 @@
 from .cliapi import parse_args
 from .context import Context
+from .profile import create_profile
 import caribou
 import os
 
