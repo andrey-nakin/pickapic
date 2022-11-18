@@ -10,7 +10,7 @@ def get_parser():
 
     parser.add_argument("--create-profile", nargs='*', metavar=('<profile>', '<parent profile>'), dest='create_profile',
                         help="Create new profile")
-    parser.add_argument("--delete-profile", help="Delete existing profile")
+    parser.add_argument("--delete-profile", metavar='<profile>', dest='delete_profile', help="Delete existing profile")
 
     parser.add_argument("--add-tag", nargs='?', metavar=('tag'), help="Add search tag to profile")
     parser.add_argument("--remove-tag", nargs='?', metavar=('tag'), help="Remove search tag from profile")

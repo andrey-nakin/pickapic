@@ -1,6 +1,7 @@
 from .cliapi import parse_args
 from .context import Context
 from .profile import create_profile
+from .profile import delete_profile
 import caribou
 import os
 
@@ -18,3 +19,5 @@ def pickapic():
 
     if args.create_profile:
         create_profile(context, args.create_profile)
+    if args.delete_profile:
+        delete_profile(context, args.delete_profile)
