@@ -1,5 +1,6 @@
 import sqlite3
 from .profile import find_profile_id_by_name
+from .utils import panic
 
 
 class Context:
@@ -13,23 +14,8 @@ class Context:
 
     def profile_id(self):
         if self.cached_profile_id is None:
-            assert self.args.profile is not None
-
+            if self.args.profile is None:
+                panic("Profile is not specified")
             self.cached_profile_id = find_profile_id_by_name(self, self.args.profile, True)
-
-            conn = self.connection()
-            cur = conn.cursor()
-            cur.execute("SELECT id FROM profile WHERE name = ?", (self.args.profile,))
-            conn.commit()
-
-            row = cur.fetchone()
-            if not row:
-                cur.execute("INSERT INTO profile (name) VALUES (?)", (self.args.profile,))
-                conn.commit()
-                self.cached_profile_id = cur.lastrowid
-            else:
-                self.cached_profile_id = row[0]
-
-            conn.close()
 
         return self.cached_profile_id
