@@ -87,3 +87,24 @@ def list_profiles(context):
         print(row[0], row[1] if row[1] is not None else "")
 
     conn.close()
+
+
+def get_profile_hierarchy(context, reverse=False):
+    conn = context.connection()
+    cur = conn.cursor()
+
+    result = []
+    profile_id = context.profile_id()
+
+    while profile_id is not None:
+        result.append(profile_id)
+
+        cur.execute("SELECT parent_id FROM profile WHERE id = ?", (profile_id,))
+        conn.commit()
+        row = cur.fetchone()
+        profile_id = row[0] if row else None
+
+    conn.close()
+    if not reverse:
+        result.reverse()
+    return result

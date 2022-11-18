@@ -12,6 +12,7 @@ from .dimension import set_min_height
 from .dimension import get_min_height
 import caribou
 import os
+from .profile import get_profile_hierarchy
 
 
 def pickapic():
@@ -54,3 +55,5 @@ def pickapic():
         get_min_height(context)
     if args.set_min_height:
         set_min_height(context, args.set_min_height)
+
+    print(get_profile_hierarchy(context))
