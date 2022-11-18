@@ -84,6 +84,6 @@ def list_profiles(context):
     print("Name Parent")
     print("===========")
     for row in rows:
-        print(row[0], row[1])
+        print(row[0], row[1] if row[1] is not None else "")
 
     conn.close()
