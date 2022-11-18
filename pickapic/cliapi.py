@@ -18,10 +18,12 @@ def get_parser():
                         help="Remove search tag(s) from current profile")
     parser.add_argument("--list-tags", dest='list_tags', action="store_true", help="List current profile's search tags")
 
-    parser.add_argument("--add-stop-tag", nargs='?', metavar=('tag'), help="Add tag to current profile's black list")
-    parser.add_argument("--remove-stop-tag", nargs='?', metavar=('tag'),
+    parser.add_argument("--add-stop-tag", nargs='+', metavar='<tag>', dest='add_stop_tags',
+                        help="Add tag(s) to current profile's black list")
+    parser.add_argument("--remove-stop-tag", nargs='+', metavar='<tag>', dest='remove_stop_tags',
                         help="Remove tag from current profile's black list")
-    parser.add_argument("--list-stop-tags", action="store_true", help="List current profile's black list tags")
+    parser.add_argument("--list-stop-tags", dest='list_stop_tags', action="store_true",
+                        help="List current profile's black list tags")
 
     parser.add_argument("--get-min-width", help="Get profile's minimal image width")
     parser.add_argument("--set-min-width", type=int, help="Set profile's minimal image width")

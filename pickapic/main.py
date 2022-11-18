@@ -24,9 +24,17 @@ def pickapic():
         create_profile(context, args.create_profile)
     if args.delete_profile:
         delete_profile(context, args.delete_profile)
+
     if args.add_tags:
-        add_tags(context, args.add_tags)
+        add_tags(context, args.add_tags, False)
     if args.remove_tags:
-        remove_tags(context, args.remove_tags)
+        remove_tags(context, args.remove_tags, False)
     if args.list_tags:
-        list_tags(context)
+        list_tags(context, False)
+
+    if args.add_stop_tags:
+        add_tags(context, args.add_stop_tags, True)
+    if args.remove_stop_tags:
+        remove_tags(context, args.remove_stop_tags, True)
+    if args.list_stop_tags:
+        list_tags(context, True)

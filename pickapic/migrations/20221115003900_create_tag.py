@@ -4,6 +4,7 @@ def upgrade(connection):
         ( 
             profile_id INTEGER NOT NULL,
             name       TEXT NOT NULL,
+            is_stop    INTEGER NOT NULL DEFAULT FALSE,
             UNIQUE(profile_id, name),
             FOREIGN KEY(profile_id) REFERENCES profile(id)
         ) 
