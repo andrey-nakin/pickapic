@@ -12,10 +12,11 @@ def get_parser():
                         help="Create new profile")
     parser.add_argument("--delete-profile", metavar='<profile>', dest='delete_profile', help="Delete existing profile")
 
-    parser.add_argument("--add-tag", nargs='+', metavar='<tag>', dest='add_tag',
+    parser.add_argument("--add-tag", nargs='+', metavar='<tag>', dest='add_tags',
                         help="Add search tag(s) to current profile")
-    parser.add_argument("--remove-tag", nargs='*', metavar=('tag'), help="Remove search tag(s) from current profile")
-    parser.add_argument("--list-tags", action="store_true", help="List current profile's search tags")
+    parser.add_argument("--remove-tag", nargs='+', metavar='<tag>', dest='remove_tags',
+                        help="Remove search tag(s) from current profile")
+    parser.add_argument("--list-tags", dest='list_tags', action="store_true", help="List current profile's search tags")
 
     parser.add_argument("--add-stop-tag", nargs='?', metavar=('tag'), help="Add tag to current profile's black list")
     parser.add_argument("--remove-stop-tag", nargs='?', metavar=('tag'),
