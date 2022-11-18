@@ -15,7 +15,7 @@ class Context:
     def profile_id(self):
         if self.cached_profile_id is None:
             if self.args.profile is None:
-                panic("Profile is not specified")
+                panic("Current profile is not specified")
             self.cached_profile_id = find_profile_id_by_name(self, self.args.profile, True)
 
         return self.cached_profile_id

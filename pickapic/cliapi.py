@@ -12,13 +12,15 @@ def get_parser():
                         help="Create new profile")
     parser.add_argument("--delete-profile", metavar='<profile>', dest='delete_profile', help="Delete existing profile")
 
-    parser.add_argument("--add-tag", nargs='?', metavar=('tag'), help="Add search tag to profile")
-    parser.add_argument("--remove-tag", nargs='?', metavar=('tag'), help="Remove search tag from profile")
-    parser.add_argument("--list-tags", action="store_true", help="List profile's search tags")
+    parser.add_argument("--add-tag", nargs='+', metavar='<tag>', dest='add_tag',
+                        help="Add search tag(s) to current profile")
+    parser.add_argument("--remove-tag", nargs='*', metavar=('tag'), help="Remove search tag(s) from current profile")
+    parser.add_argument("--list-tags", action="store_true", help="List current profile's search tags")
 
-    parser.add_argument("--add-stop-tag", nargs='?', metavar=('tag'), help="Add tag to profile black list")
-    parser.add_argument("--remove-stop-tag", nargs='?', metavar=('tag'), help="Remove tag from profile black list")
-    parser.add_argument("--list-stop-tags", action="store_true", help="List profile's black list tags")
+    parser.add_argument("--add-stop-tag", nargs='?', metavar=('tag'), help="Add tag to current profile's black list")
+    parser.add_argument("--remove-stop-tag", nargs='?', metavar=('tag'),
+                        help="Remove tag from current profile's black list")
+    parser.add_argument("--list-stop-tags", action="store_true", help="List current profile's black list tags")
 
     parser.add_argument("--get-min-width", help="Get profile's minimal image width")
     parser.add_argument("--set-min-width", type=int, help="Set profile's minimal image width")
