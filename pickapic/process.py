@@ -33,6 +33,7 @@ def _process_image(context, image):
         min_x = math.floor((width - target_width) / 2)
         min_y = math.floor((height - target_height) / 2)
         cropped = original.crop((min_x, min_y, min_x + target_width, min_y + target_height))
-        cropped.save("cropped.jpg")
+        cropped.save(image.destname)
 
-    print(image)
+    print(image.title)
+    print(image.image_page_url)

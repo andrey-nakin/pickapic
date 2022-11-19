@@ -6,6 +6,9 @@ from tempfile import mkstemp
 import os
 import urllib.request
 from pickapic.imagedescriptor import ImageDescriptor
+from urllib.parse import urlparse
+import pathlib
+import hashlib
 
 
 def doit(context, num_of_images):
@@ -43,7 +46,7 @@ def doit(context, num_of_images):
             if not photo['height_o'] or photo['height_o'] < min_height:
                 continue
 
-            descriptor = _process_photo(context, photo)
+            descriptor = _process_photo(context, flickr, photo)
             if descriptor:
                 result.append(descriptor)
                 found_photos = found_photos + 1
@@ -101,7 +104,7 @@ def get_api_key(context):
     return api_key, api_secret
 
 
-def _process_photo(context, photo):
+def _process_photo(context, flickr, photo):
     fd, filename = mkstemp()
     os.close(fd)
 
@@ -115,4 +118,20 @@ def _process_photo(context, photo):
     print("downloading from", photo['url_o'], "to", filename)
     urllib.request.urlretrieve(photo['url_o'], filename)
 
-    return ImageDescriptor(filename=filename, width=photo['width_o'], height=photo['height_o'])
+    parsed_url = urlparse(photo['url_o'])
+    destname = hashlib.md5(photo['url_o'].encode('utf-8')).hexdigest() + pathlib.Path(
+        parsed_url.path).suffix
+
+    info = flickr.photos.getInfo(photo_id=photo['id'], secret=photo['secret'])
+    print(info)
+    if info['stat'] != 'ok':
+        panic("Flickr: error getting photo info")
+
+    image_page_url = None
+    if info['photo'] and info['photo']['urls'] and info['photo']['urls']['url']:
+        for url in info['photo']['urls']['url']:
+            if url['type'] and url['type'] == 'photopage':
+                image_page_url = url['_content']
+
+    return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
+                           title=photo['title'], image_page_url=image_page_url)
