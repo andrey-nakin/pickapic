@@ -19,3 +19,8 @@ def orientation(dimensions):
     if width * 1.4 < height:
         return 'Portrait'
     return 'Square'
+
+
+def intersection(lst1, lst2):
+    lst3 = [value for value in lst1 if value in lst2]
+    return lst3

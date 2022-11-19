@@ -10,6 +10,7 @@ from time import sleep
 from pickapic.profile import get_profile_hierarchy
 from pickapic.utils import panic
 from pickapic.utils import orientation_matches
+from pickapic.utils import intersection
 from pickapic.imagedescriptor import ImageDescriptor
 from pickapic.authordescriptor import AuthorDescriptor
 from pickapic.licensedescriptor import LicenseDescriptor
@@ -18,7 +19,8 @@ from pickapic.licensedescriptor import LicenseDescriptor
 def doit(context, num_of_images):
     api_key, api_secret = get_api_key(context)
     min_width, min_height = context.min_dimensions()
-    tags = ', '.join(context.tags() + list(map(lambda x: '-' + x, context.stop_tags())))
+    # tags = ','.join(context.tags() + list(map(lambda x: '-' + x, context.stop_tags())))
+    tags = ','.join(context.tags())
     # print(tags)
 
     flickr = flickrapi.FlickrAPI(api_key, api_secret, format='parsed-json')
@@ -42,7 +44,7 @@ def doit(context, num_of_images):
         page = page + 1
         photos = flickr.photos.search(tags=tags, tag_mode='any', privacy_filter=1, safe_search=1, content_type=1,
                                       media='photos',
-                                      extras='license, date_upload, o_dims, url_o',
+                                      extras='license, date_upload, o_dims, url_o, tags',
                                       sort='date-posted-asc',
                                       license='1,2,3,4,5,6,7,9,10',
                                       per_page=per_page, page=page)
@@ -55,11 +57,18 @@ def doit(context, num_of_images):
             break  # no more photos
 
         for photo in photos['photos']['photo']:
-            if not photo['width_o'] or photo['width_o'] < min_width:
+            if 'width_o' not in photo or photo['width_o'] < min_width:
                 continue
-            if not photo['height_o'] or photo['height_o'] < min_height:
+            if 'height_o' not in photo or photo['height_o'] < min_height:
                 continue
             if not orientation_matches((photo['width_o'], photo['height_o']), (min_width, min_height)):
+                continue
+            if 'tags' not in photo:
+                continue
+            photo_tags = str(photo['tags']).split()
+            if len(intersection(photo_tags, context.tags())) == 0:
+                continue
+            if len(intersection(photo_tags, context.stop_tags())) > 0:
                 continue
 
             descriptor = _process_photo(flickr, photo, authors, licenses)
