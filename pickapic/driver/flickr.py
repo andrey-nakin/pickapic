@@ -11,6 +11,7 @@ from pickapic.utils import panic
 from tempfile import mkstemp
 from pickapic.imagedescriptor import ImageDescriptor
 from pickapic.authordescriptor import AuthorDescriptor
+from pickapic.licensedescriptor import LicenseDescriptor
 
 
 def doit(context, num_of_images):
@@ -19,8 +20,14 @@ def doit(context, num_of_images):
 
     flickr = flickrapi.FlickrAPI(api_key, api_secret, format='parsed-json')
 
-    licenses = flickr.photos.licenses.getInfo()
-    # print(licenses)
+    licenses = dict({})
+    license_info = flickr.photos.licenses.getInfo()
+    if license_info['stat'] != 'ok':
+        panic("Flickr: error getting license info")
+    if license_info['licenses'] and license_info['licenses']['license']:
+        for lic in license_info['licenses']['license']:
+            licenses[str(lic['id'])] = lic
+    print(licenses)
 
     found_photos = 0
     page = 0
@@ -49,7 +56,7 @@ def doit(context, num_of_images):
             if not photo['height_o'] or photo['height_o'] < min_height:
                 continue
 
-            descriptor = _process_photo(context, flickr, photo, authors)
+            descriptor = _process_photo(flickr, photo, authors, licenses)
             if descriptor:
                 result.append(descriptor)
                 found_photos = found_photos + 1
@@ -107,11 +114,11 @@ def get_api_key(context):
     return api_key, api_secret
 
 
-def _process_photo(context, flickr, photo, authors):
+def _process_photo(flickr, photo, authors, licenses):
     fd, filename = mkstemp()
     os.close(fd)
 
-    # print(photo)
+    print(photo)
 
     if not photo['url_o']:
         print("No link to origin size, ignoring photo")
@@ -140,13 +147,21 @@ def _process_photo(context, flickr, photo, authors):
         if photo['owner'] in authors:
             author = authors[photo['owner']]  # use cached inf0
         else:
-            authors[photo['owner']] = author = _get_author_info(context, flickr, photo['owner'])
+            authors[photo['owner']] = author = _get_author_info(flickr, photo['owner'])
+
+    license_desc = None
+    if photo['license']:
+        lic_id = str(photo['license'])
+        if lic_id in photo['license'] in licenses:
+            lic_info = licenses[lic_id]
+            license_desc = LicenseDescriptor(name=lic_info['name'], page_url=lic_info['url'])
 
     return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
-                           title=photo['title'], image_page_url=image_page_url, author=author)
+                           title=photo['title'], image_page_url=image_page_url, author_desc=author,
+                           license_desc=license_desc)
 
 
-def _get_author_info(context, flickr, user_id):
+def _get_author_info(flickr, user_id):
     info = flickr.people.getInfo(user_id=user_id)
     if info['stat'] != 'ok':
         panic("Flickr: error getting people info")
