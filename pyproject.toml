@@ -10,6 +10,7 @@ python = "^3.8"
 argparse = "^1.4.0"
 caribou = "^0.3.0"
 flickrapi = "^2.4.0"
+pillow = "^9.3.0"
 
 [tool.poetry.scripts]
 pickapic = "pickapic.main:pickapic"
