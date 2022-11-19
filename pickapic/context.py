@@ -2,6 +2,7 @@ import sqlite3
 from .profile import find_profile_id_by_name
 from .utils import panic
 from .dimension import get_min_dimensions
+from .tag import get_tags
 
 
 class Context:
@@ -11,6 +12,8 @@ class Context:
         self.cached_profile_id = None
         self.cached_min_width = None
         self.cached_min_height = None
+        self.cached_tags = None
+        self.cached_stop_tags = None
 
     def connection(self):
         return sqlite3.connect(self.args.config)
@@ -27,3 +30,13 @@ class Context:
         if self.cached_min_width is None:
             self.cached_min_width, self.cached_min_height = get_min_dimensions(self)
         return self.cached_min_width, self.cached_min_height
+
+    def tags(self):
+        if self.cached_tags is None:
+            self.cached_tags = get_tags(self, False)
+        return self.cached_tags
+
+    def stop_tags(self):
+        if self.cached_stop_tags is None:
+            self.cached_stop_tags = get_tags(self, True)
+        return self.cached_stop_tags

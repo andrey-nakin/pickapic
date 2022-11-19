@@ -18,6 +18,8 @@ from pickapic.licensedescriptor import LicenseDescriptor
 def doit(context, num_of_images):
     api_key, api_secret = get_api_key(context)
     min_width, min_height = context.min_dimensions()
+    tags = ', '.join(context.tags() + list(map(lambda x: '-' + x, context.stop_tags())))
+    # print(tags)
 
     flickr = flickrapi.FlickrAPI(api_key, api_secret, format='parsed-json')
 
@@ -38,15 +40,16 @@ def doit(context, num_of_images):
 
     while num_of_images > found_photos:
         page = page + 1
-        print("Flickr: loading ", per_page, " photos from page", page)
-        photos = flickr.photos.search(tags='krasnodar', tag_mode='any', privacy_filter=1, safe_search=1, content_type=1,
+        photos = flickr.photos.search(tags=tags, tag_mode='any', privacy_filter=1, safe_search=1, content_type=1,
                                       media='photos',
                                       extras='license, date_upload, o_dims, url_o',
                                       sort='date-posted-asc',
                                       license='1,2,3,4,5,6,7,9,10',
                                       per_page=per_page, page=page)
+        # print(photos)
         if photos['stat'] != 'ok':
             panic("Flickr: error searching photos")
+        print("Flickr: loading", per_page, "photos from page", page, "total", photos['photos']['total'])
 
         if len(photos['photos']['photo']) == 0:
             break  # no more photos
@@ -127,7 +130,7 @@ def _process_photo(flickr, photo, authors, licenses):
         print("No link to origin size, ignoring photo")
         return None
 
-    print("downloading from", photo['url_o'], "to", filename)
+    print("Flickr: downloading from", photo['url_o'], "to", filename)
     urllib.request.urlretrieve(photo['url_o'], filename)
 
     parsed_url = urlparse(photo['url_o'])

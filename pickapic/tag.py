@@ -1,3 +1,6 @@
+from pickapic.profile import get_profile_hierarchy
+
+
 def tag_exists(context, tag):
     conn = context.connection()
     cur = conn.cursor()
@@ -48,3 +51,22 @@ def list_tags(context, is_stop):
         print(row[0])
 
     conn.close()
+
+
+def get_tags(context, is_stop):
+    profile_ids = get_profile_hierarchy(context)
+
+    conn = context.connection()
+    cur = conn.cursor()
+    result = []
+
+    for profile_id in profile_ids:
+        cur.execute("SELECT name FROM tag WHERE profile_id = ? AND is_stop = ?", (profile_id, 1 if is_stop else 0,))
+        conn.commit()
+        rows = cur.fetchall()
+        for row in rows:
+            result.append(row[0])
+
+    conn.close()
+
+    return result
