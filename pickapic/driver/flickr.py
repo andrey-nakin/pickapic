@@ -1,14 +1,16 @@
 import flickrapi
+from urllib.parse import urlparse
+import pathlib
+import hashlib
+import os
+import urllib.request
+
 from time import sleep
 from pickapic.profile import get_profile_hierarchy
 from pickapic.utils import panic
 from tempfile import mkstemp
-import os
-import urllib.request
 from pickapic.imagedescriptor import ImageDescriptor
-from urllib.parse import urlparse
-import pathlib
-import hashlib
+from pickapic.authordescriptor import AuthorDescriptor
 
 
 def doit(context, num_of_images):
@@ -24,6 +26,7 @@ def doit(context, num_of_images):
     page = 0
     per_page = min(500, num_of_images * 10)
     result = []
+    authors = dict({})
 
     while num_of_images > found_photos:
         page = page + 1
@@ -46,7 +49,7 @@ def doit(context, num_of_images):
             if not photo['height_o'] or photo['height_o'] < min_height:
                 continue
 
-            descriptor = _process_photo(context, flickr, photo)
+            descriptor = _process_photo(context, flickr, photo, authors)
             if descriptor:
                 result.append(descriptor)
                 found_photos = found_photos + 1
@@ -104,7 +107,7 @@ def get_api_key(context):
     return api_key, api_secret
 
 
-def _process_photo(context, flickr, photo):
+def _process_photo(context, flickr, photo, authors):
     fd, filename = mkstemp()
     os.close(fd)
 
@@ -133,5 +136,37 @@ def _process_photo(context, flickr, photo):
             if url['type'] and url['type'] == 'photopage':
                 image_page_url = url['_content']
 
+    author = None
+    if photo['owner']:
+        if photo['owner'] in authors:
+            author = authors[photo['owner']]  # use cached inf0
+        else:
+            authors[photo['owner']] = author = _get_author_info(context, flickr, photo['owner'])
+
     return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
-                           title=photo['title'], image_page_url=image_page_url)
+                           title=photo['title'], image_page_url=image_page_url, author=author)
+
+
+def _get_author_info(context, flickr, user_id):
+    info = flickr.people.getInfo(user_id=user_id)
+    print(info)
+    if info['stat'] != 'ok':
+        panic("Flickr: error getting people info")
+    person = info['person']
+    name = None
+    page_url = None
+
+    if person:
+        if person['realname']:
+            name = person['realname']['_content']
+        else:
+            name = person['username']['_content']
+
+        if person['profileurl']:
+            page_url = person['profileurl']['_content']
+        elif person['photosurl']:
+            page_url = person['photosurl']['_content']
+        elif person['mobileurl']:
+            page_url = person['mobileurl']['_content']
+
+    return AuthorDescriptor(name=name, page_url=page_url)

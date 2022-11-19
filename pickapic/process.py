@@ -37,3 +37,5 @@ def _process_image(context, image):
 
     print(image.title)
     print(image.image_page_url)
+    print(image.author.name)
+    print(image.author.page_url)
