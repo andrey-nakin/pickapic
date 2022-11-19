@@ -82,12 +82,6 @@ def process(context, num_of_images):
 
     return result
 
-    # print(photos)
-    # print(flickr.photos.getSizes(photo_id='50699751858'))
-    # print("")
-    # print(flickr.photos.getInfo(photo_id='50699751858', secret='d04d7e5535'))
-    # print("doit done")
-
 
 def set_api_key(context, api_key, api_secret):
     conn = context.connection()
