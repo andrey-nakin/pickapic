@@ -16,7 +16,7 @@ from pickapic.authordescriptor import AuthorDescriptor
 from pickapic.licensedescriptor import LicenseDescriptor
 
 
-def doit(context, num_of_images):
+def process(context, num_of_images):
     api_key, api_secret = get_api_key(context)
     min_width, min_height = context.min_dimensions()
     # tags = ','.join(context.tags() + list(map(lambda x: '-' + x, context.stop_tags())))

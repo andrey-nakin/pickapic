@@ -5,7 +5,7 @@ from .image import resize_and_crop
 
 def process(context, num_of_images):
     while num_of_images > 0:
-        images = flickr.doit(context, num_of_images)
+        images = flickr.process(context, num_of_images)
         num_of_images = num_of_images - len(images)
         if len(images) == 0:
             break
