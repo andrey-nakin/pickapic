@@ -148,22 +148,6 @@ def _process_photo(flickr, photo, authors, licenses):
     if license_desc is None:
         return None
 
-    fd, filename = mkstemp()
-    os.close(fd)
-
-    # print(photo)
-
-    if not photo['url_o']:
-        print("No link to origin size, ignoring photo")
-        return None
-
-    print("Flickr: downloading from", photo['url_o'], "to", filename)
-    urllib.request.urlretrieve(photo['url_o'], filename)
-
-    parsed_url = urlparse(photo['url_o'])
-    destname = hashlib.md5(photo['url_o'].encode('utf-8')).hexdigest() + pathlib.Path(
-        parsed_url.path).suffix
-
     info = flickr.photos.getInfo(photo_id=photo['id'], secret=photo['secret'])
     # print(info)
     if info['stat'] != 'ok':
@@ -174,6 +158,22 @@ def _process_photo(flickr, photo, authors, licenses):
         for url in info['photo']['urls']['url']:
             if 'type' in url and url['type'] == 'photopage':
                 image_page_url = url['_content']
+
+    # print(photo)
+
+    if not photo['url_o']:
+        print("No link to origin size, ignoring photo")
+        return None
+
+    fd, filename = mkstemp()
+    os.close(fd)
+
+    print("Flickr: downloading from", photo['url_o'], "to", filename)
+    urllib.request.urlretrieve(photo['url_o'], filename)
+
+    parsed_url = urlparse(photo['url_o'])
+    destname = hashlib.md5(photo['url_o'].encode('utf-8')).hexdigest() + pathlib.Path(
+        parsed_url.path).suffix
 
     return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
                            title=photo['title'], image_page_url=image_page_url, author_desc=author,
