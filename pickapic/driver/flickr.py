@@ -121,6 +121,24 @@ def get_api_key(context):
 
 
 def _process_photo(flickr, photo, authors, licenses):
+    author = None
+    if 'owner' in photo:
+        if photo['owner'] in authors:
+            author = authors[photo['owner']]  # use cached inf0
+        else:
+            authors[photo['owner']] = author = _get_author_info(flickr, photo['owner'])
+    if author is None:
+        return None
+
+    license_desc = None
+    if 'license' in photo:
+        lic_id = str(photo['license'])
+        if lic_id in photo['license'] in licenses:
+            lic_info = licenses[lic_id]
+            license_desc = LicenseDescriptor(name=lic_info['name'], page_url=lic_info['url'])
+    if license_desc is None:
+        return None
+
     fd, filename = mkstemp()
     os.close(fd)
 
@@ -143,24 +161,10 @@ def _process_photo(flickr, photo, authors, licenses):
         panic("Flickr: error getting photo info")
 
     image_page_url = None
-    if info['photo'] and info['photo']['urls'] and info['photo']['urls']['url']:
+    if 'photo' in info and 'urls' in info['photo'] and 'url' in info['photo']['urls']:
         for url in info['photo']['urls']['url']:
-            if url['type'] and url['type'] == 'photopage':
+            if 'type' in url and url['type'] == 'photopage':
                 image_page_url = url['_content']
-
-    author = None
-    if photo['owner']:
-        if photo['owner'] in authors:
-            author = authors[photo['owner']]  # use cached inf0
-        else:
-            authors[photo['owner']] = author = _get_author_info(flickr, photo['owner'])
-
-    license_desc = None
-    if photo['license']:
-        lic_id = str(photo['license'])
-        if lic_id in photo['license'] in licenses:
-            lic_info = licenses[lic_id]
-            license_desc = LicenseDescriptor(name=lic_info['name'], page_url=lic_info['url'])
 
     return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
                            title=photo['title'], image_page_url=image_page_url, author_desc=author,
@@ -176,16 +180,16 @@ def _get_author_info(flickr, user_id):
     page_url = None
 
     if person:
-        if person['realname']:
+        if 'realname' in person:
             name = person['realname']['_content']
         else:
             name = person['username']['_content']
 
-        if person['profileurl']:
+        if 'profileurl' in person:
             page_url = person['profileurl']['_content']
-        elif person['photosurl']:
+        elif 'photosurl' in person:
             page_url = person['photosurl']['_content']
-        elif person['mobileurl']:
+        elif 'mobileurl' in person:
             page_url = person['mobileurl']['_content']
 
     return AuthorDescriptor(name=name, page_url=page_url)
