@@ -3,8 +3,9 @@ from pickapic.profile import get_profile_hierarchy
 
 
 def doit(context):
-    print("doit")
     api_key, api_secret = get_api_key(context)
+    min_width, min_height = context.min_dimensions()
+
     flickr = flickrapi.FlickrAPI(api_key, api_secret, format='parsed-json')
 
     licenses = flickr.photos.licenses.getInfo()
