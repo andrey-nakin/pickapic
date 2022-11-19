@@ -4,11 +4,12 @@ import pathlib
 import hashlib
 import os
 import urllib.request
-
+from tempfile import mkstemp
 from time import sleep
+
 from pickapic.profile import get_profile_hierarchy
 from pickapic.utils import panic
-from tempfile import mkstemp
+from pickapic.utils import orientation_matches
 from pickapic.imagedescriptor import ImageDescriptor
 from pickapic.authordescriptor import AuthorDescriptor
 from pickapic.licensedescriptor import LicenseDescriptor
@@ -27,7 +28,7 @@ def doit(context, num_of_images):
     if license_info['licenses'] and license_info['licenses']['license']:
         for lic in license_info['licenses']['license']:
             licenses[str(lic['id'])] = lic
-    print(licenses)
+    # print(licenses)
 
     found_photos = 0
     page = 0
@@ -54,6 +55,8 @@ def doit(context, num_of_images):
             if not photo['width_o'] or photo['width_o'] < min_width:
                 continue
             if not photo['height_o'] or photo['height_o'] < min_height:
+                continue
+            if not orientation_matches((photo['width_o'], photo['height_o']), (min_width, min_height)):
                 continue
 
             descriptor = _process_photo(flickr, photo, authors, licenses)
@@ -118,7 +121,7 @@ def _process_photo(flickr, photo, authors, licenses):
     fd, filename = mkstemp()
     os.close(fd)
 
-    print(photo)
+    # print(photo)
 
     if not photo['url_o']:
         print("No link to origin size, ignoring photo")
