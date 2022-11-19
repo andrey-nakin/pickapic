@@ -1,3 +1,6 @@
+import caribou
+import os
+
 from .cliapi import parse_args
 from .context import Context
 from .profile import create_profile
@@ -10,9 +13,8 @@ from .dimension import get_min_width
 from .dimension import set_min_width
 from .dimension import set_min_height
 from .dimension import get_min_height
-import caribou
-import os
-from .profile import get_profile_hierarchy
+from .process import process
+from .driver import flickr
 
 
 def pickapic():
@@ -56,4 +58,8 @@ def pickapic():
     if args.set_min_height:
         set_min_height(context, args.set_min_height)
 
-    print(get_profile_hierarchy(context))
+    if args.flickr_api_key:
+        flickr.set_api_key(context, args.flickr_api_key[0], args.flickr_api_key[1])
+
+    if args.image_number:
+        process(context, args.image_number)
