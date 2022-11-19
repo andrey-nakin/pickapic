@@ -111,8 +111,7 @@ def _process_photo(context, flickr, photo, authors):
     fd, filename = mkstemp()
     os.close(fd)
 
-    print(photo)
-    print("========================")
+    # print(photo)
 
     if not photo['url_o']:
         print("No link to origin size, ignoring photo")
@@ -126,7 +125,7 @@ def _process_photo(context, flickr, photo, authors):
         parsed_url.path).suffix
 
     info = flickr.photos.getInfo(photo_id=photo['id'], secret=photo['secret'])
-    print(info)
+    # print(info)
     if info['stat'] != 'ok':
         panic("Flickr: error getting photo info")
 
@@ -149,7 +148,6 @@ def _process_photo(context, flickr, photo, authors):
 
 def _get_author_info(context, flickr, user_id):
     info = flickr.people.getInfo(user_id=user_id)
-    print(info)
     if info['stat'] != 'ok':
         panic("Flickr: error getting people info")
     person = info['person']

@@ -1,6 +1,7 @@
 from .driver import flickr
 from PIL import Image
 import math
+import os
 
 
 def process(context, num_of_images):
@@ -39,3 +40,5 @@ def _process_image(context, image):
     print(image.image_page_url)
     print(image.author.name)
     print(image.author.page_url)
+
+    os.unlink(image.filename)
