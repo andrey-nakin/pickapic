@@ -15,7 +15,7 @@ def process(context, num_of_images):
 
 
 def _process_image(context, image):
-    resize_and_crop(image.filename, image.destname, context.min_dimensions())
+    resize_and_crop(image.filename, os.path.join(context.args.dest_dir, image.destname), context.min_dimensions())
     os.unlink(image.filename)
 
     print(image.title)

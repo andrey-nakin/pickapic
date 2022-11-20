@@ -36,7 +36,7 @@ def get_parser():
                         help="Set current profile's minimal image height")
 
     parser.add_argument("--image-number", "-n", dest='image_number', type=int, help="Number of images to download")
-    parser.add_argument("--dest-dir", "-d", help="Destination directory", default=".")
+    parser.add_argument("--dest-dir", "-d", dest='dest_dir', help="Destination directory", default=".")
 
     parser.add_argument("--flickr-api-key", nargs=2, metavar=('<api key>', '<api secret>'), dest='flickr_api_key',
                         help="Set API key and secret for the current profile")
