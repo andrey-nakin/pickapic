@@ -13,8 +13,9 @@ def process(context, num_of_images):
         if len(images) == 0:
             break
 
-        for image in images:
-            _process_image(context, image)
+        if not context.args.dry_run:
+            for image in images:
+                _process_image(context, image)
 
         break
 

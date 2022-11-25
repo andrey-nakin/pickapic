@@ -85,10 +85,11 @@ def flickr_process(context, num_of_images):
                 _update_statistics(statistics, 'stop-tags')
                 continue
 
-            descriptor = _process_photo(flickr, photo, authors, licenses)
+            descriptor = _process_photo(context, flickr, photo, authors, licenses)
             if descriptor:
                 result.append(descriptor)
                 found_photos = found_photos + 1
+                _update_statistics(statistics, 'found')
                 if num_of_images <= found_photos:
                     break
 
@@ -101,6 +102,7 @@ def flickr_process(context, num_of_images):
     _print_statistics(statistics, 'no-tags', 'Excluded due to missing tags:')
     _print_statistics(statistics, 'tag-mismatch', 'Excluded due to tag mismatch:')
     _print_statistics(statistics, 'stop-tags', 'Excluded due to stop tags:')
+    _print_statistics(statistics, 'found', 'Found:')
 
     return result
 
@@ -117,7 +119,7 @@ def _print_statistics(statistics, key, title):
         print(title, statistics[key], '(', math.floor(statistics[key] * 100 / statistics['total']), '% )')
 
 
-def _process_photo(flickr, photo, authors, licenses):
+def _process_photo(context, flickr, photo, authors, licenses):
     author = None
     if 'owner' in photo:
         if photo['owner'] in authors:
@@ -153,15 +155,18 @@ def _process_photo(flickr, photo, authors, licenses):
         print("No link to origin size, ignoring photo")
         return None
 
-    fd, filename = mkstemp()
-    os.close(fd)
-
-    print("Flickr: downloading from", photo['url_o'], "to", filename)
-    urllib.request.urlretrieve(photo['url_o'], filename)
-
     parsed_url = urlparse(photo['url_o'])
     destname = hashlib.md5(photo['url_o'].encode('utf-8')).hexdigest() + pathlib.Path(
         parsed_url.path).suffix
+
+    if not context.args.dry_run:
+        fd, filename = mkstemp()
+        os.close(fd)
+
+        print("Flickr: downloading from", photo['url_o'], "to", filename)
+        urllib.request.urlretrieve(photo['url_o'], filename)
+    else:
+        filename = 'none'
 
     return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
                            title=photo['title'], image_page_url=image_page_url, author_desc=author,
