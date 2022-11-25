@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "A command line tool that downloads a random photo from a public image hosting."
 authors = ["Andrey Nakin <andrey.nakin@gmail.com>"]
 readme = "README.md"
+packages = [{ include = "pickapic" }]
 
 [tool.poetry.dependencies]
 python = "^3.8"
