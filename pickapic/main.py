@@ -1,14 +1,15 @@
 import caribou
 import os
 
-from .cliapi import parse_args
-from .context import Context
-from .profile import create_profile, delete_profile, list_profiles
-from .tag import add_tags, remove_tags, list_tags
-from .dimension import get_min_width, set_min_width, set_min_height, get_min_height
-from .process import process
-from .flickr.apikey import flickr_set_api_key
-from .flickr.license import flickr_add_licenses, flickr_remove_licenses, flickr_list_licenses, flickr_dump_licenses
+from pickapic.cliapi import parse_args
+from pickapic.context import Context
+from pickapic.profile import create_profile, delete_profile, list_profiles
+from pickapic.tag import add_tags, remove_tags, list_tags
+from pickapic.dimension import get_min_width, set_min_width, set_min_height, get_min_height
+from pickapic.process import process
+from pickapic.flickr.apikey import flickr_set_api_key
+from pickapic.flickr.license import flickr_add_licenses, flickr_remove_licenses, flickr_list_licenses, \
+    flickr_dump_licenses
 
 
 def pickapic():

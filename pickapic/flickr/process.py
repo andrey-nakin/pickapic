@@ -14,8 +14,8 @@ from pickapic.imagedescriptor import ImageDescriptor
 from pickapic.authordescriptor import AuthorDescriptor
 from pickapic.licensedescriptor import LicenseDescriptor
 
-from .apikey import flickr_get_api_key
-from .license import flickr_get_license_ids, flickr_load_license_info
+from pickapic.flickr.apikey import flickr_get_api_key
+from pickapic.flickr.license import flickr_get_license_ids, flickr_load_license_info
 
 MAX_PHOTOS_PER_PAGE = 500
 

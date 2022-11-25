@@ -1,4 +1,4 @@
-from .utils import panic
+from pickapic.utils import panic
 
 
 def find_profile_id_by_name(context, name, required=False):

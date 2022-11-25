@@ -1,8 +1,8 @@
 import sqlite3
-from .profile import find_profile_id_by_name
-from .utils import panic
-from .dimension import get_min_dimensions
-from .tag import get_tags
+from pickapic.profile import find_profile_id_by_name
+from pickapic.utils import panic
+from pickapic.dimension import get_min_dimensions
+from pickapic.tag import get_tags
 
 
 class Context:

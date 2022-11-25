@@ -3,7 +3,7 @@ import flickrapi
 from pickapic.utils import panic
 from pickapic.profile import get_profile_hierarchy
 
-from .apikey import flickr_get_api_key
+from pickapic.flickr.apikey import flickr_get_api_key
 
 
 def flickr_add_licenses(context, license_ids):

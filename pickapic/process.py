@@ -1,7 +1,7 @@
 import os
 
-from .flickr.process import flickr_process
-from .image import resize_and_crop, set_exif_info
+from pickapic.flickr.process import flickr_process
+from pickapic.image import resize_and_crop, set_exif_info
 
 SEPARATOR = ' | '
 
