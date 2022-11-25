@@ -22,12 +22,12 @@ def _process_image(context, image):
     resize_and_crop(image.filename, destname, context.min_dimensions())
     os.unlink(image.filename)
 
-    print(image.title)
-    print(image.image_page_url)
-    print(image.author_desc.name)
-    print(image.author_desc.page_url)
-    print(image.license_desc.name)
-    print(image.license_desc.page_url)
+    # print(image.title)
+    # print(image.image_page_url)
+    # print(image.author_desc.name)
+    # print(image.author_desc.page_url)
+    # print(image.license_desc.name)
+    # print(image.license_desc.page_url)
 
     image_info = None
     if image.title:
