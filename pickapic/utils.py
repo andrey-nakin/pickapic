@@ -1,9 +1,5 @@
-import sys
-
-
 def panic(error_msg):
-    print(error_msg, file=sys.stderr)
-    exit(1)
+    raise ValueError(error_msg)
 
 
 def orientation_matches(image_dimensions, target_dimensions):
