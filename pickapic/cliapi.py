@@ -40,6 +40,14 @@ def get_parser():
 
     parser.add_argument("--flickr-api-key", nargs=2, metavar=('<api key>', '<api secret>'), dest='flickr_api_key',
                         help="Set API key and secret for the current profile")
+    parser.add_argument("--flickr-add-license", nargs='+', metavar='<license ID>', dest='flickr_add_licenses',
+                        help="Add Flickr license(s) to current profile")
+    parser.add_argument("--flickr-remove-license", nargs='+', metavar='<license ID>', dest='flickr_remove_licenses',
+                        help="Remove Flickr license(s) from current profile")
+    parser.add_argument("--flickr-list-license", dest='flickr_list_licenses', action="store_true",
+                        help="List Flickr licenses of current profile")
+    parser.add_argument("--flickr-dump-licenses", dest='flickr_dump_licenses', action="store_true",
+                        help="Dump all standard Flickr licenses in JSON format")
 
     return parser
 

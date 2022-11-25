@@ -3,18 +3,12 @@ import os
 
 from .cliapi import parse_args
 from .context import Context
-from .profile import create_profile
-from .profile import delete_profile
-from .profile import list_profiles
-from .tag import add_tags
-from .tag import remove_tags
-from .tag import list_tags
-from .dimension import get_min_width
-from .dimension import set_min_width
-from .dimension import set_min_height
-from .dimension import get_min_height
+from .profile import create_profile, delete_profile, list_profiles
+from .tag import add_tags, remove_tags, list_tags
+from .dimension import get_min_width, set_min_width, set_min_height, get_min_height
 from .process import process
-from .driver import flickr
+from .flickr.apikey import flickr_set_api_key
+from .flickr.license import flickr_add_licenses, flickr_remove_licenses, flickr_list_licenses, flickr_dump_licenses
 
 
 def pickapic():
@@ -59,7 +53,16 @@ def pickapic():
         set_min_height(context, args.set_min_height)
 
     if args.flickr_api_key:
-        flickr.set_api_key(context, args.flickr_api_key[0], args.flickr_api_key[1])
+        flickr_set_api_key(context, args.flickr_api_key[0], args.flickr_api_key[1])
+
+    if args.flickr_add_licenses:
+        flickr_add_licenses(context, args.flickr_add_licenses)
+    if args.flickr_remove_licenses:
+        flickr_remove_licenses(context, args.flickr_remove_licenses)
+    if args.flickr_list_licenses:
+        flickr_list_licenses(context)
+    if args.flickr_dump_licenses:
+        flickr_dump_licenses(context)
 
     if args.image_number:
         process(context, args.image_number)

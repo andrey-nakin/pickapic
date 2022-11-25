@@ -1,11 +1,11 @@
-from .driver import flickr
+from .flickr.process import flickr_process
 import os
 from .image import resize_and_crop
 
 
 def process(context, num_of_images):
     while num_of_images > 0:
-        images = flickr.process(context, num_of_images)
+        images = flickr_process(context, num_of_images)
         num_of_images = num_of_images - len(images)
         if len(images) == 0:
             break

@@ -7,7 +7,6 @@ import urllib.request
 from tempfile import mkstemp
 from time import sleep
 
-from pickapic.profile import get_profile_hierarchy
 from pickapic.utils import panic
 from pickapic.utils import orientation_matches
 from pickapic.utils import intersection
@@ -15,9 +14,14 @@ from pickapic.imagedescriptor import ImageDescriptor
 from pickapic.authordescriptor import AuthorDescriptor
 from pickapic.licensedescriptor import LicenseDescriptor
 
+from .apikey import flickr_get_api_key
+from .license import flickr_get_license_ids, flickr_load_license_info
 
-def process(context, num_of_images):
-    api_key, api_secret = get_api_key(context)
+MAX_PHOTOS_PER_PAGE = 500
+
+
+def flickr_process(context, num_of_images):
+    api_key, api_secret = flickr_get_api_key(context)
     min_width, min_height = context.min_dimensions()
     # tags = ','.join(context.tags() + list(map(lambda x: '-' + x, context.stop_tags())))
     tags = ','.join(context.tags())
@@ -26,27 +30,21 @@ def process(context, num_of_images):
     flickr = flickrapi.FlickrAPI(api_key, api_secret, format='parsed-json')
 
     licenses = dict({})
-    license_info = flickr.photos.licenses.getInfo()
-    if license_info['stat'] != 'ok':
-        panic("Flickr: error getting license info")
-    if license_info['licenses'] and license_info['licenses']['license']:
-        for lic in license_info['licenses']['license']:
-            licenses[str(lic['id'])] = lic
+    for lic in flickr_load_license_info(context):
+        licenses[str(lic['id'])] = lic
     # print(licenses)
 
     found_photos = 0
     page = 0
-    per_page = min(500, num_of_images * 10)
+    per_page = min(MAX_PHOTOS_PER_PAGE, num_of_images * 10)
     result = []
     authors = dict({})
 
     while num_of_images > found_photos:
         page = page + 1
         photos = flickr.photos.search(tags=tags, tag_mode='any', privacy_filter=1, safe_search=1, content_type=1,
-                                      media='photos',
-                                      extras='license, date_upload, o_dims, url_o, tags',
-                                      sort='date-posted-asc',
-                                      license='1,2,3,4,5,6,7,9,10',
+                                      media='photos', extras='license, date_upload, o_dims, url_o, tags',
+                                      sort='date-posted-asc', license=','.join(flickr_get_license_ids(context)),
                                       per_page=per_page, page=page)
         # print(photos)
         if photos['stat'] != 'ok':
@@ -81,46 +79,6 @@ def process(context, num_of_images):
         sleep(1)
 
     return result
-
-
-def set_api_key(context, api_key, api_secret):
-    conn = context.connection()
-    cur = conn.cursor()
-    cur.execute("SELECT profile_id FROM flickr_api WHERE profile_id = ?", (context.profile_id(),))
-    conn.commit()
-
-    row = cur.fetchone()
-    if not row:
-        cur.execute("INSERT INTO flickr_api (profile_id, api_key, api_secret) VALUES (?, ?, ?)",
-                    (context.profile_id(), api_key, api_secret))
-    else:
-        cur.execute("UPDATE flickr_api SET api_key = ?,api_secret = ? WHERE profile_id = ?",
-                    (api_key, api_secret, context.profile_id(),))
-
-    conn.commit()
-    conn.close()
-
-
-def get_api_key(context):
-    profile_ids = get_profile_hierarchy(context)
-
-    conn = context.connection()
-    cur = conn.cursor()
-
-    api_key = None
-    api_secret = None
-
-    for profile_id in profile_ids:
-        cur.execute("SELECT api_key, api_secret FROM flickr_api WHERE profile_id = ? AND api_key <> ''", (profile_id,))
-        conn.commit()
-        row = cur.fetchone()
-        if row:
-            api_key = row[0]
-            api_secret = row[1]
-
-    conn.close()
-
-    return api_key, api_secret
 
 
 def _process_photo(flickr, photo, authors, licenses):
