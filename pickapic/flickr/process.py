@@ -1,3 +1,5 @@
+import math
+
 import flickrapi
 from urllib.parse import urlparse
 import pathlib
@@ -39,13 +41,15 @@ def flickr_process(context, num_of_images):
     per_page = min(MAX_PHOTOS_PER_PAGE, num_of_images * 10)
     result = []
     authors = dict({})
+    processed_photo_ids = []
+    statistics = {}
 
     while num_of_images > found_photos:
         page = page + 1
         photos = flickr.photos.search(tags=tags, tag_mode='any', privacy_filter=1, safe_search=1, content_type=1,
                                       media='photos', extras='license, date_upload, o_dims, url_o, tags',
                                       sort='date-posted-asc', license=','.join(flickr_get_license_ids(context)),
-                                      per_page=per_page, page=page)
+                                      per_page=per_page, page=page, min_upload_date=0)
         # print(photos)
         if photos['stat'] != 'ok':
             panic("Flickr: error searching photos")
@@ -55,18 +59,30 @@ def flickr_process(context, num_of_images):
             break  # no more photos
 
         for photo in photos['photos']['photo']:
+            photo_id = photo['id']
+            if photo_id in processed_photo_ids:
+                continue
+            processed_photo_ids.append(photo_id)
+            _update_statistics(statistics, 'total')
+
             if 'width_o' not in photo or photo['width_o'] < min_width:
+                _update_statistics(statistics, 'size-mismatch')
                 continue
             if 'height_o' not in photo or photo['height_o'] < min_height:
+                _update_statistics(statistics, 'size-mismatch')
                 continue
             if not orientation_matches((photo['width_o'], photo['height_o']), (min_width, min_height)):
+                _update_statistics(statistics, 'orientation-mismatch')
                 continue
             if 'tags' not in photo:
+                _update_statistics(statistics, 'no-tags')
                 continue
             photo_tags = str(photo['tags']).split()
             if len(intersection(photo_tags, context.tags())) == 0:
+                _update_statistics(statistics, 'tag-mismatch')
                 continue
             if len(intersection(photo_tags, context.stop_tags())) > 0:
+                _update_statistics(statistics, 'stop-tags')
                 continue
 
             descriptor = _process_photo(flickr, photo, authors, licenses)
@@ -78,7 +94,27 @@ def flickr_process(context, num_of_images):
 
         sleep(1)
 
+    print("Flickr: statistics")
+    print("Total photos processed:", statistics['total'])
+    _print_statistics(statistics, 'size-mismatch', 'Excluded due to size mismatch:')
+    _print_statistics(statistics, 'orientation-mismatch', 'Excluded due to orientation mismatch:')
+    _print_statistics(statistics, 'no-tags', 'Excluded due to missing tags:')
+    _print_statistics(statistics, 'tag-mismatch', 'Excluded due to tag mismatch:')
+    _print_statistics(statistics, 'stop-tags', 'Excluded due to stop tags:')
+
     return result
+
+
+def _update_statistics(statistics, key):
+    if key not in statistics:
+        statistics[key] = 1
+    else:
+        statistics[key] = statistics[key] + 1
+
+
+def _print_statistics(statistics, key, title):
+    if key in statistics:
+        print(title, statistics[key], '(', math.floor(statistics[key] * 100 / statistics['total']), '% )')
 
 
 def _process_photo(flickr, photo, authors, licenses):
