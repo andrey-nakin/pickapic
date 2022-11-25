@@ -138,16 +138,17 @@ def _process_photo(context, flickr, photo, authors, licenses):
     if license_desc is None:
         return None
 
-    info = flickr.photos.getInfo(photo_id=photo['id'], secret=photo['secret'])
-    # print(info)
-    if info['stat'] != 'ok':
-        panic("Flickr: error getting photo info")
-
     image_page_url = None
-    if 'photo' in info and 'urls' in info['photo'] and 'url' in info['photo']['urls']:
-        for url in info['photo']['urls']['url']:
-            if 'type' in url and url['type'] == 'photopage':
-                image_page_url = url['_content']
+    if not context.args.dry_run:
+        info = flickr.photos.getInfo(photo_id=photo['id'], secret=photo['secret'])
+        # print(info)
+        if info['stat'] != 'ok':
+            panic("Flickr: error getting photo info")
+
+        if 'photo' in info and 'urls' in info['photo'] and 'url' in info['photo']['urls']:
+            for url in info['photo']['urls']['url']:
+                if 'type' in url and url['type'] == 'photopage':
+                    image_page_url = url['_content']
 
     # print(photo)
 
