@@ -16,6 +16,8 @@ def process(context, num_of_images):
         for image in images:
             _process_image(context, image)
 
+        break
+
 
 def _process_image(context, image):
     destname = os.path.join(context.args.dest_dir, image.destname)
