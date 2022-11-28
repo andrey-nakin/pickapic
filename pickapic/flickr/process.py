@@ -36,15 +36,14 @@ def flickr_process(context, num_of_images):
         licenses[str(lic['id'])] = lic
     # print(licenses)
 
-    found_photos = 0
     page = 0
     per_page = min(MAX_PHOTOS_PER_PAGE, num_of_images * 10)
     result = []
     authors = dict({})
     processed_photo_ids = []
-    statistics = {}
+    statistics = {'found': 0}
 
-    while num_of_images > found_photos:
+    while num_of_images > statistics['found']:
         page = page + 1
         photos = flickr.photos.search(tags=tags, tag_mode='any', privacy_filter=1, safe_search=1, content_type=1,
                                       media='photos', extras='license, date_upload, o_dims, url_o, tags',
@@ -88,9 +87,8 @@ def flickr_process(context, num_of_images):
             descriptor = _process_photo(context, flickr, photo, authors, licenses)
             if descriptor:
                 result.append(descriptor)
-                found_photos = found_photos + 1
                 _update_statistics(statistics, 'found')
-                if num_of_images <= found_photos:
+                if num_of_images <= statistics['found']:
                     break
 
         sleep(1)
