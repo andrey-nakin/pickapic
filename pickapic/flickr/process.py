@@ -84,7 +84,7 @@ def flickr_process(context, num_of_images):
                 _update_statistics(statistics, 'stop-tags')
                 continue
 
-            descriptor = _process_photo(context, flickr, photo, authors, licenses)
+            descriptor = _process_photo(context, flickr, photo, authors, licenses, statistics)
             if descriptor:
                 result.append(descriptor)
                 _update_statistics(statistics, 'found')
@@ -100,6 +100,8 @@ def flickr_process(context, num_of_images):
     _print_statistics(statistics, 'no-tags', 'Excluded due to missing tags:')
     _print_statistics(statistics, 'tag-mismatch', 'Excluded due to tag mismatch:')
     _print_statistics(statistics, 'stop-tags', 'Excluded due to stop tags:')
+    _print_statistics(statistics, 'no-author-info', 'Excluded due to absence of author info:')
+    _print_statistics(statistics, 'no-license-info', 'Excluded due to absence of license info:')
     _print_statistics(statistics, 'found', 'Found:')
 
     return result
@@ -114,10 +116,10 @@ def _update_statistics(statistics, key):
 
 def _print_statistics(statistics, key, title):
     if key in statistics:
-        print(title, statistics[key], '(', math.floor(statistics[key] * 100 / statistics['total']), '% )')
+        print(title, statistics[key], '(', "{0:.1%}".format(statistics[key] / statistics['total']), ')')
 
 
-def _process_photo(context, flickr, photo, authors, licenses):
+def _process_photo(context, flickr, photo, authors, licenses, statistics):
     author = None
     if 'owner' in photo:
         if photo['owner'] in authors:
@@ -125,6 +127,7 @@ def _process_photo(context, flickr, photo, authors, licenses):
         else:
             authors[photo['owner']] = author = _get_author_info(flickr, photo['owner'])
     if author is None:
+        _update_statistics(statistics, 'no-author-info')
         return None
 
     license_desc = None
@@ -134,6 +137,7 @@ def _process_photo(context, flickr, photo, authors, licenses):
             lic_info = licenses[lic_id]
             license_desc = LicenseDescriptor(name=lic_info['name'], page_url=lic_info['url'])
     if license_desc is None:
+        _update_statistics(statistics, 'no-license-info')
         return None
 
     image_page_url = None
