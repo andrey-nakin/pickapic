@@ -35,6 +35,11 @@ def get_parser():
     parser.add_argument("--set-min-height", metavar='<min height>', dest='set_min_height', type=int,
                         help="Set current profile's minimal image height")
 
+    parser.add_argument("--get-num-of-processed", dest='get_num_of_processed', action="store_true",
+                        help="Get total number of processed images in the current profile")
+    parser.add_argument("--reset-processed", dest='reset_processed', action="store_true",
+                        help="Reset information about processed images in the current profile")
+
     parser.add_argument("--image-number", "-n", dest='image_number', type=int, help="Number of images to download")
     parser.add_argument("--dest-dir", "-d", dest='dest_dir', help="Destination directory", default=".")
     parser.add_argument("--dry-run", dest='dry_run', action="store_true",

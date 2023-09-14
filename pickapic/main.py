@@ -7,6 +7,7 @@ from pickapic.profile import create_profile, delete_profile, list_profiles
 from pickapic.tag import add_tags, remove_tags, list_tags
 from pickapic.dimension import get_min_width, set_min_width, set_min_height, get_min_height
 from pickapic.process import process
+from pickapic.processedimage import print_num_of_processed, reset_processed_images
 from pickapic.flickr.apikey import flickr_set_api_key
 from pickapic.flickr.license import flickr_add_licenses, flickr_remove_licenses, flickr_list_licenses, \
     flickr_dump_licenses
@@ -53,6 +54,11 @@ def pickapic():
         get_min_height(context)
     if args.set_min_height:
         set_min_height(context, args.set_min_height)
+
+    if args.get_num_of_processed:
+        print_num_of_processed(context)
+    if args.reset_processed:
+        reset_processed_images(context)
 
     if args.flickr_api_key:
         flickr_set_api_key(context, args.flickr_api_key[0], args.flickr_api_key[1])
