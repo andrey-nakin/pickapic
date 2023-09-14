@@ -1,6 +1,7 @@
 class ImageDescriptor:
 
-    def __init__(self, filename, destname, width, height, title, image_page_url, author_desc, license_desc):
+    def __init__(self, id, filename, destname, width, height, title, image_page_url, author_desc, license_desc):
+        self.id = id
         self.filename = filename
         self.destname = destname
         self.width = width

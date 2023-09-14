@@ -16,6 +16,7 @@ from pickapic.utils import intersection
 from pickapic.imagedescriptor import ImageDescriptor
 from pickapic.authordescriptor import AuthorDescriptor
 from pickapic.licensedescriptor import LicenseDescriptor
+from pickapic.processedimage import is_image_processed
 
 from pickapic.flickr.apikey import flickr_get_api_key
 from pickapic.flickr.license import flickr_get_license_ids, flickr_load_license_info
@@ -50,7 +51,8 @@ def flickr_process(context, num_of_images):
     if min_search_timestamp is None:
         min_search_timestamp = 0
     else:
-        print("Flickr: searching for images with upload time greater than", datetime.fromtimestamp(min_search_timestamp))
+        print("Flickr: searching for images with upload time greater than",
+              datetime.fromtimestamp(min_search_timestamp))
 
     while num_of_images > statistics['found']:
         page = page + 1
@@ -137,6 +139,10 @@ def _print_statistics(statistics, key, title):
 
 
 def _process_photo(context, flickr, photo, authors, licenses, statistics):
+    image_id = 'flickr:' + photo['id']
+    if is_image_processed(context, image_id):
+        return None
+
     author = None
     if 'owner' in photo:
         if photo['owner'] in authors:
@@ -188,9 +194,9 @@ def _process_photo(context, flickr, photo, authors, licenses, statistics):
     else:
         filename = 'none'
 
-    return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
-                           title=photo['title'], image_page_url=image_page_url, author_desc=author,
-                           license_desc=license_desc)
+    return ImageDescriptor(id=image_id, filename=filename, destname=destname, width=photo['width_o'],
+                           height=photo['height_o'], title=photo['title'], image_page_url=image_page_url,
+                           author_desc=author, license_desc=license_desc)
 
 
 def _get_author_info(flickr, user_id):

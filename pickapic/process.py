@@ -2,6 +2,7 @@ import os
 
 from pickapic.flickr.process import flickr_process
 from pickapic.image import resize_and_crop, set_exif_info
+from pickapic.processedimage import add_image_to_processed
 
 SEPARATOR = ' | '
 
@@ -51,3 +52,5 @@ def _process_image(context, image):
             license_info = license_info + SEPARATOR + image.license_desc.page_url
 
     set_exif_info(destname, image_description=image_info, artist=author_info, copyright=license_info)
+
+    add_image_to_processed(context, image.id)
