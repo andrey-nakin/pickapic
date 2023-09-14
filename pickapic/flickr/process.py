@@ -8,6 +8,7 @@ import os
 import urllib.request
 from tempfile import mkstemp
 from time import sleep
+from datetime import datetime
 
 from pickapic.utils import panic
 from pickapic.utils import orientation_matches
@@ -44,15 +45,19 @@ def flickr_process(context, num_of_images):
     processed_photo_ids = []
     statistics = {'found': 0}
     max_found_timestamp = 0
+
     min_search_timestamp = flickr_get_min_timestamp(context)
+    if min_search_timestamp is None:
+        min_search_timestamp = 0
+    else:
+        print("Flickr: searching for images with upload time greater than", datetime.fromtimestamp(min_search_timestamp))
 
     while num_of_images > statistics['found']:
         page = page + 1
         photos = flickr.photos.search(tags=tags, tag_mode='any', privacy_filter=1, safe_search=1, content_type=1,
                                       media='photos', extras='license, date_upload, o_dims, url_o, tags',
                                       sort='date-posted-asc', license=','.join(flickr_get_license_ids(context)),
-                                      per_page=per_page, page=page,
-                                      min_upload_date=min_search_timestamp if min_search_timestamp is not None else 0)
+                                      per_page=per_page, page=page, min_upload_date=min_search_timestamp)
         # print(photos)
         if photos['stat'] != 'ok':
             panic("Flickr: error searching photos")
