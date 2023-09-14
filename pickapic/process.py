@@ -30,7 +30,7 @@ def _process_image(context, image):
     # print(image.author_desc.name)
     # print(image.author_desc.page_url)
     # print(image.license_desc.name)
-    # print(image.license_desc.page_url)
+    # print(image.timestamp)
 
     image_info = None
     if image.title:

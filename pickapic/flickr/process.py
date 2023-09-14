@@ -8,6 +8,7 @@ import os
 import urllib.request
 from tempfile import mkstemp
 from time import sleep
+from datetime import datetime
 
 from pickapic.utils import panic
 from pickapic.utils import orientation_matches
@@ -74,6 +75,9 @@ def flickr_process(context, num_of_images):
                 _update_statistics(statistics, 'orientation-mismatch')
                 continue
             if 'tags' not in photo:
+                _update_statistics(statistics, 'no-tags')
+                continue
+            if 'dateupload' not in photo:
                 _update_statistics(statistics, 'no-tags')
                 continue
             photo_tags = str(photo['tags']).split()
@@ -173,7 +177,7 @@ def _process_photo(context, flickr, photo, authors, licenses, statistics):
 
     return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
                            title=photo['title'], image_page_url=image_page_url, author_desc=author,
-                           license_desc=license_desc)
+                           license_desc=license_desc, timestamp=datetime.fromtimestamp(int(photo['dateupload'])))
 
 
 def _get_author_info(flickr, user_id):
