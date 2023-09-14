@@ -8,7 +8,6 @@ import os
 import urllib.request
 from tempfile import mkstemp
 from time import sleep
-from datetime import datetime
 
 from pickapic.utils import panic
 from pickapic.utils import orientation_matches
@@ -19,6 +18,7 @@ from pickapic.licensedescriptor import LicenseDescriptor
 
 from pickapic.flickr.apikey import flickr_get_api_key
 from pickapic.flickr.license import flickr_get_license_ids, flickr_load_license_info
+from pickapic.flickr.timestamp import flickr_get_min_timestamp, flickr_set_min_timestamp
 
 MAX_PHOTOS_PER_PAGE = 500
 
@@ -43,13 +43,16 @@ def flickr_process(context, num_of_images):
     authors = dict({})
     processed_photo_ids = []
     statistics = {'found': 0}
+    max_found_timestamp = 0
+    min_search_timestamp = flickr_get_min_timestamp(context)
 
     while num_of_images > statistics['found']:
         page = page + 1
         photos = flickr.photos.search(tags=tags, tag_mode='any', privacy_filter=1, safe_search=1, content_type=1,
                                       media='photos', extras='license, date_upload, o_dims, url_o, tags',
                                       sort='date-posted-asc', license=','.join(flickr_get_license_ids(context)),
-                                      per_page=per_page, page=page, min_upload_date=0)
+                                      per_page=per_page, page=page,
+                                      min_upload_date=min_search_timestamp if min_search_timestamp is not None else 0)
         # print(photos)
         if photos['stat'] != 'ok':
             panic("Flickr: error searching photos")
@@ -92,6 +95,9 @@ def flickr_process(context, num_of_images):
             if descriptor:
                 result.append(descriptor)
                 _update_statistics(statistics, 'found')
+                timestamp = int(photo['dateupload'])
+                if max_found_timestamp < timestamp:
+                    max_found_timestamp = timestamp
                 if num_of_images <= statistics['found']:
                     break
 
@@ -107,6 +113,8 @@ def flickr_process(context, num_of_images):
     _print_statistics(statistics, 'no-author-info', 'Excluded due to absence of author info:')
     _print_statistics(statistics, 'no-license-info', 'Excluded due to absence of license info:')
     _print_statistics(statistics, 'found', 'Found:')
+
+    flickr_set_min_timestamp(context, max_found_timestamp)
 
     return result
 
@@ -177,7 +185,7 @@ def _process_photo(context, flickr, photo, authors, licenses, statistics):
 
     return ImageDescriptor(filename=filename, destname=destname, width=photo['width_o'], height=photo['height_o'],
                            title=photo['title'], image_page_url=image_page_url, author_desc=author,
-                           license_desc=license_desc, timestamp=datetime.fromtimestamp(int(photo['dateupload'])))
+                           license_desc=license_desc)
 
 
 def _get_author_info(flickr, user_id):

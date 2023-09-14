@@ -50,6 +50,10 @@ def get_parser():
                         help="List Flickr licenses of current profile")
     parser.add_argument("--flickr-dump-licenses", dest='flickr_dump_licenses', action="store_true",
                         help="Dump all standard Flickr licenses in JSON format")
+    parser.add_argument("--flickr-dump-min-timestamp", dest='flickr_dump_min_timestamp', action="store_true",
+                        help="Dump the stored minimal image timestamp")
+    parser.add_argument("--flickr-reset-min-timestamp", dest='flickr_reset_min_timestamp', action="store_true",
+                        help="Reset the stored minimal image timestamp")
 
     return parser
 

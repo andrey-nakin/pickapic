@@ -10,6 +10,7 @@ from pickapic.process import process
 from pickapic.flickr.apikey import flickr_set_api_key
 from pickapic.flickr.license import flickr_add_licenses, flickr_remove_licenses, flickr_list_licenses, \
     flickr_dump_licenses
+from pickapic.flickr.timestamp import flickr_dump_min_timestamp, flickr_reset_min_timestamp
 
 
 def pickapic():
@@ -64,6 +65,10 @@ def pickapic():
         flickr_list_licenses(context)
     if args.flickr_dump_licenses:
         flickr_dump_licenses(context)
+    if args.flickr_dump_min_timestamp:
+        flickr_dump_min_timestamp(context)
+    if args.flickr_reset_min_timestamp:
+        flickr_reset_min_timestamp(context)
 
     if args.image_number:
         process(context, args.image_number)
