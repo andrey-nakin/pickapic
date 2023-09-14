@@ -8,10 +8,7 @@ from pickapic.tag import add_tags, remove_tags, list_tags
 from pickapic.dimension import get_min_width, set_min_width, set_min_height, get_min_height
 from pickapic.process import process
 from pickapic.processedimage import print_num_of_processed, reset_processed_images
-from pickapic.flickr.apikey import flickr_set_api_key
-from pickapic.flickr.license import flickr_add_licenses, flickr_remove_licenses, flickr_list_licenses, \
-    flickr_dump_licenses
-from pickapic.flickr.timestamp import flickr_dump_min_timestamp, flickr_reset_min_timestamp
+from pickapic.flickr.cli import flickr_main
 
 
 def pickapic():
@@ -60,21 +57,7 @@ def pickapic():
     if args.reset_processed:
         reset_processed_images(context)
 
-    if args.flickr_api_key:
-        flickr_set_api_key(context, args.flickr_api_key[0], args.flickr_api_key[1])
-
-    if args.flickr_add_licenses:
-        flickr_add_licenses(context, args.flickr_add_licenses)
-    if args.flickr_remove_licenses:
-        flickr_remove_licenses(context, args.flickr_remove_licenses)
-    if args.flickr_list_licenses:
-        flickr_list_licenses(context)
-    if args.flickr_dump_licenses:
-        flickr_dump_licenses(context)
-    if args.flickr_dump_min_timestamp:
-        flickr_dump_min_timestamp(context)
-    if args.flickr_reset_min_timestamp:
-        flickr_reset_min_timestamp(context)
+    flickr_main(context, args)
 
     if args.image_number:
         process(context, args.image_number)

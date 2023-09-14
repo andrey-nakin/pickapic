@@ -1,4 +1,5 @@
 import argparse
+from pickapic.flickr.cli import flickr_add_argument
 
 
 def get_parser():
@@ -45,20 +46,7 @@ def get_parser():
     parser.add_argument("--dry-run", dest='dry_run', action="store_true",
                         help="Do not actually download images, do search only")
 
-    parser.add_argument("--flickr-api-key", nargs=2, metavar=('<api key>', '<api secret>'), dest='flickr_api_key',
-                        help="Set API key and secret for the current profile")
-    parser.add_argument("--flickr-add-license", nargs='+', metavar='<license ID>', dest='flickr_add_licenses',
-                        help="Add Flickr license(s) to current profile")
-    parser.add_argument("--flickr-remove-license", nargs='+', metavar='<license ID>', dest='flickr_remove_licenses',
-                        help="Remove Flickr license(s) from current profile")
-    parser.add_argument("--flickr-list-license", dest='flickr_list_licenses', action="store_true",
-                        help="List Flickr licenses of current profile")
-    parser.add_argument("--flickr-dump-licenses", dest='flickr_dump_licenses', action="store_true",
-                        help="Dump all standard Flickr licenses in JSON format")
-    parser.add_argument("--flickr-dump-min-timestamp", dest='flickr_dump_min_timestamp', action="store_true",
-                        help="Dump the stored minimal image timestamp")
-    parser.add_argument("--flickr-reset-min-timestamp", dest='flickr_reset_min_timestamp', action="store_true",
-                        help="Reset the stored minimal image timestamp")
+    flickr_add_argument(parser)
 
     return parser
 
