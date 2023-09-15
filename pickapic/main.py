@@ -45,11 +45,11 @@ def pickapic():
 
     if args.get_min_width:
         get_min_width(context)
-    if args.set_min_width:
+    if args.set_min_width is not None:
         set_min_width(context, args.set_min_width)
     if args.get_min_height:
         get_min_height(context)
-    if args.set_min_height:
+    if args.set_min_height is not None:
         set_min_height(context, args.set_min_height)
 
     if args.get_num_of_processed:

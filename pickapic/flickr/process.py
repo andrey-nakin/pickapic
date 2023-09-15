@@ -63,12 +63,15 @@ def flickr_process(context, num_of_images):
         print("Flickr: searching for images with upload time greater than",
               datetime.fromtimestamp(min_search_timestamp))
 
+    license_ids = flickr_get_license_ids(context)
+
     while num_of_images > statistics['found']:
         page = page + 1
         photos = flickr.photos.search(tags=tags, tag_mode=tag_mode, privacy_filter=1, safe_search=3, content_types=0,
                                       media='photos', extras='license, date_upload, o_dims, url_o, tags',
-                                      sort='date-posted-asc', license=','.join(flickr_get_license_ids(context)),
-                                      per_page=per_page, page=page, min_upload_date=min_search_timestamp)
+                                      sort='date-posted-asc',
+                                      license=','.join(license_ids) if len(license_ids) > 0 else None, per_page=per_page,
+                                      page=page, min_upload_date=min_search_timestamp)
         # print(photos)
         if photos['stat'] != 'ok':
             panic("Flickr: error searching photos")
@@ -84,15 +87,18 @@ def flickr_process(context, num_of_images):
             processed_photo_ids.append(photo_id)
             _update_statistics(statistics, 'total')
 
-            if 'width_o' not in photo or photo['width_o'] < min_width:
-                _update_statistics(statistics, 'size-mismatch')
-                continue
-            if 'height_o' not in photo or photo['height_o'] < min_height:
-                _update_statistics(statistics, 'size-mismatch')
-                continue
-            if not orientation_matches((photo['width_o'], photo['height_o']), (min_width, min_height)):
-                _update_statistics(statistics, 'orientation-mismatch')
-                continue
+            if min_width > 0:
+                if 'width_o' not in photo or photo['width_o'] < min_width:
+                    _update_statistics(statistics, 'size-mismatch')
+                    continue
+            if min_height > 0:
+                if 'height_o' not in photo or photo['height_o'] < min_height:
+                    _update_statistics(statistics, 'size-mismatch')
+                    continue
+            if min_width > 0 and min_height > 0:
+                if not orientation_matches((photo['width_o'], photo['height_o']), (min_width, min_height)):
+                    _update_statistics(statistics, 'orientation-mismatch')
+                    continue
             if 'tags' not in photo:
                 _update_statistics(statistics, 'no-tags')
                 continue
@@ -169,7 +175,7 @@ def _process_photo(context, flickr, photo, authors, licenses, statistics):
         if lic_id in photo['license'] in licenses:
             lic_info = licenses[lic_id]
             license_desc = LicenseDescriptor(name=lic_info['name'], page_url=lic_info['url'])
-    if license_desc is None:
+    if license_desc is None and len(licenses) > 0:
         _update_statistics(statistics, 'no-license-info')
         return None
 
@@ -187,7 +193,7 @@ def _process_photo(context, flickr, photo, authors, licenses, statistics):
 
     # print(photo)
 
-    if not photo['url_o']:
+    if 'url_o' not in photo:
         print("No link to origin size, ignoring photo")
         return None
 

@@ -29,25 +29,24 @@ def resize_and_crop(srcfile, destfile, target_dimensions):
 
 
 def set_exif_info(image_file_name, image_description=None, copyright=None, artist=None):
-    im = Image.open(image_file_name)
     try:
-        exif_dict = piexif.load(im.info["exif"])
-    except KeyError:
-        exif_dict = dict({'0th': {}})
+        im = Image.open(image_file_name)
+        try:
+            exif_dict = piexif.load(im.info["exif"])
+        except KeyError:
+            exif_dict = dict({'0th': {}})
 
-    if image_description:
-        exif_dict["0th"][piexif.ImageIFD.ImageDescription] = _encode_exif_tag(image_description)
-    if copyright:
-        exif_dict["0th"][piexif.ImageIFD.Copyright] = _encode_exif_tag(copyright)
-    if artist:
-        exif_dict["0th"][piexif.ImageIFD.Artist] = _encode_exif_tag(artist)
-    exif_bytes = piexif.dump(exif_dict)
-    try:
+        if image_description:
+            exif_dict["0th"][piexif.ImageIFD.ImageDescription] = _encode_exif_tag(image_description)
+        if copyright:
+            exif_dict["0th"][piexif.ImageIFD.Copyright] = _encode_exif_tag(copyright)
+        if artist:
+            exif_dict["0th"][piexif.ImageIFD.Artist] = _encode_exif_tag(artist)
+
+        exif_bytes = piexif.dump(exif_dict)
         im.save(image_file_name, "jpeg", exif=exif_bytes)
-    except OSError:
-        print("Error storing EXIF info")
-    except piexif._exceptions.InvalidImageDataError:
-        print("Error storing EXIF info")
+    except Exception as e:
+        print("Error storing EXIF info", e)
 
 
 def _encode_exif_tag(s):
