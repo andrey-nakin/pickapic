@@ -3,6 +3,7 @@ import os
 from pickapic.flickr.process import flickr_process
 from pickapic.image import resize_and_crop, set_exif_info
 from pickapic.processedimage import add_image_to_processed
+from pickapic.fileutil import copyfile_overwrite
 
 SEPARATOR = ' | '
 
@@ -23,7 +24,10 @@ def process(context, num_of_images):
 
 def _process_image(context, image):
     destname = os.path.join(context.args.dest_dir, image.destname)
-    resize_and_crop(image.filename, destname, context.min_dimensions(), do_not_crop=context.args.do_not_crop)
+    if context.args.do_not_crop:
+        copyfile_overwrite(src_file_name=image.filename, dest_file_name=destname)
+    else:
+        resize_and_crop(image.filename, destname, context.min_dimensions())
     os.unlink(image.filename)
 
     # print(image.title)
