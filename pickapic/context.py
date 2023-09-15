@@ -32,6 +32,8 @@ class Context:
         return self.cached_min_width, self.cached_min_height
 
     def tags(self):
+        if self.args.tags is not None:
+            return self.args.tags
         if self.cached_tags is None:
             self.cached_tags = get_tags(self, False)
         return self.cached_tags

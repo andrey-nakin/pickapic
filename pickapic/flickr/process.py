@@ -47,6 +47,11 @@ def flickr_process(context, num_of_images):
     statistics = {'found': 0}
     max_found_timestamp = 0
 
+    tag_mode = 'any'
+    if context.args.all_tags:
+        tag_mode = 'all'
+    print("Flickr: searching for images tagged by:", tags, "with mode", tag_mode)
+
     min_search_timestamp = flickr_get_min_timestamp(context)
     if min_search_timestamp is None:
         min_search_timestamp = 0
@@ -56,7 +61,7 @@ def flickr_process(context, num_of_images):
 
     while num_of_images > statistics['found']:
         page = page + 1
-        photos = flickr.photos.search(tags=tags, tag_mode='any', privacy_filter=1, safe_search=3, content_types=0,
+        photos = flickr.photos.search(tags=tags, tag_mode=tag_mode, privacy_filter=1, safe_search=3, content_types=0,
                                       media='photos', extras='license, date_upload, o_dims, url_o, tags',
                                       sort='date-posted-asc', license=','.join(flickr_get_license_ids(context)),
                                       per_page=per_page, page=page, min_upload_date=min_search_timestamp)

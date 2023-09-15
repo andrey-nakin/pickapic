@@ -14,6 +14,11 @@ def get_parser():
     parser.add_argument("--delete-profile", metavar='<profile>', dest='delete_profile', help="Delete existing profile")
     parser.add_argument("--list-profiles", dest='list_profiles', action="store_true", help="List all profiles")
 
+    parser.add_argument("--tag", nargs='+', metavar='<tag>', dest='tags',
+                        help="Use these tags for current search only, do not store them")
+    parser.add_argument("--all-tags", dest='all_tags', action="store_true",
+                        help="All tags are required")
+
     parser.add_argument("--add-tag", nargs='+', metavar='<tag>', dest='add_tags',
                         help="Add search tag(s) to current profile")
     parser.add_argument("--remove-tag", nargs='+', metavar='<tag>', dest='remove_tags',
@@ -35,6 +40,9 @@ def get_parser():
                         help="Set current profile's minimal image height")
     parser.add_argument("--set-min-height", metavar='<min height>', dest='set_min_height', type=int,
                         help="Set current profile's minimal image height")
+
+    parser.add_argument("--do-not-crop", dest='do_not_crop', action="store_true",
+                        help="Preserve image's original size")
 
     parser.add_argument("--get-num-of-processed", dest='get_num_of_processed', action="store_true",
                         help="Get total number of processed images in the current profile")
