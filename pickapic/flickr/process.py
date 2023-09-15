@@ -1,4 +1,5 @@
 import math
+import webbrowser
 
 import flickrapi
 from urllib.parse import urlparse
@@ -33,6 +34,22 @@ def flickr_process(context, num_of_images):
     # print(tags)
 
     flickr = flickrapi.FlickrAPI(api_key, api_secret, format='parsed-json')
+
+    if not flickr.token_valid(perms='read'):
+        # Get a request token
+        flickr.get_request_token(oauth_callback='oob')
+
+        # Open a browser at the authentication URL. Do this however
+        # you want, as long as the user visits that URL.
+        authorize_url = flickr.auth_url(perms='read')
+        webbrowser.open_new_tab(authorize_url)
+
+        # Get the verifier code from the user. Do this however you
+        # want, as long as the user gives the application the code.
+        verifier = str(input('Verifier code: '))
+
+        # Trade the request token for an access token
+        flickr.get_access_token(verifier)
 
     licenses = dict({})
     for lic in flickr_load_license_info(context):
@@ -70,7 +87,8 @@ def flickr_process(context, num_of_images):
         photos = flickr.photos.search(tags=tags, tag_mode=tag_mode, privacy_filter=1, safe_search=3, content_types=0,
                                       media='photos', extras='license, date_upload, o_dims, url_o, tags',
                                       sort='date-posted-asc',
-                                      license=','.join(license_ids) if len(license_ids) > 0 else None, per_page=per_page,
+                                      license=','.join(license_ids) if len(license_ids) > 0 else None,
+                                      per_page=per_page,
                                       page=page, min_upload_date=min_search_timestamp)
         # print(photos)
         if photos['stat'] != 'ok':
