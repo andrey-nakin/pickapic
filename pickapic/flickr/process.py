@@ -90,6 +90,7 @@ def flickr_process(context, num_of_images):
                                       license=','.join(license_ids) if len(license_ids) > 0 else None,
                                       per_page=per_page,
                                       page=page, min_upload_date=min_search_timestamp)
+
         # print(photos)
         if photos['stat'] != 'ok':
             panic("Flickr: error searching photos")
@@ -140,8 +141,6 @@ def flickr_process(context, num_of_images):
                     max_found_timestamp = timestamp
                 if num_of_images <= statistics['found']:
                     break
-
-        sleep(1)
 
     print("Flickr: statistics")
     print("Total photos processed:", statistics['total'])
@@ -235,6 +234,7 @@ def _process_photo(context, flickr, photo, authors, licenses, statistics):
 
 def _get_author_info(flickr, user_id):
     info = flickr.people.getInfo(user_id=user_id)
+
     if info['stat'] != 'ok':
         panic("Flickr: error getting people info")
     person = info['person']
