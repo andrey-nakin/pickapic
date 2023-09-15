@@ -23,8 +23,7 @@ def process(context, num_of_images):
 
 def _process_image(context, image):
     destname = os.path.join(context.args.dest_dir, image.destname)
-    if not context.args.do_not_crop:
-        resize_and_crop(image.filename, destname, context.min_dimensions())
+    resize_and_crop(image.filename, destname, context.min_dimensions(), do_not_crop=context.args.do_not_crop)
     os.unlink(image.filename)
 
     # print(image.title)
