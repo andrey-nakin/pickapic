@@ -42,7 +42,12 @@ def set_exif_info(image_file_name, image_description=None, copyright=None, artis
     if artist:
         exif_dict["0th"][piexif.ImageIFD.Artist] = _encode_exif_tag(artist)
     exif_bytes = piexif.dump(exif_dict)
-    im.save(image_file_name, "jpeg", exif=exif_bytes)
+    try:
+        im.save(image_file_name, "jpeg", exif=exif_bytes)
+    except OSError:
+        print("Error storing EXIF info")
+    except piexif._exceptions.InvalidImageDataError:
+        print("Error storing EXIF info")
 
 
 def _encode_exif_tag(s):

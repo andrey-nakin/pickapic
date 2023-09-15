@@ -47,10 +47,14 @@ def flickr_process(context, num_of_images):
     statistics = {'found': 0}
     max_found_timestamp = 0
 
+    sort_mode = context.args.sort
+    if not sort_mode:
+        sort_mode = 'date-posted-asc'
+
     tag_mode = 'any'
     if context.args.all_tags:
         tag_mode = 'all'
-    print("Flickr: searching for images tagged by:", tags, "with mode", tag_mode)
+    print("Flickr: searching for images tagged by:", tags, "with mode", tag_mode, "sort mode", sort_mode)
 
     min_search_timestamp = flickr_get_min_timestamp(context)
     if min_search_timestamp is None:
@@ -126,7 +130,8 @@ def flickr_process(context, num_of_images):
     _print_statistics(statistics, 'no-license-info', 'Excluded due to absence of license info:')
     _print_statistics(statistics, 'found', 'Found:')
 
-    flickr_set_min_timestamp(context, max_found_timestamp)
+    if sort_mode == 'date-posted-asc':
+        flickr_set_min_timestamp(context, max_found_timestamp)
 
     return result
 

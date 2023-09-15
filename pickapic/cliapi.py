@@ -18,6 +18,7 @@ def get_parser():
                         help="Use these tags for current search only, do not store them")
     parser.add_argument("--all-tags", dest='all_tags', action="store_true",
                         help="All tags are required")
+    parser.add_argument("--sort", help="Sorting mode")
 
     parser.add_argument("--add-tag", nargs='+', metavar='<tag>', dest='add_tags',
                         help="Add search tag(s) to current profile")
