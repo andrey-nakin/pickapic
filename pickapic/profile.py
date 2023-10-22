@@ -56,9 +56,12 @@ def delete_profile(context, profile_name):
         panic("Profile is used by other profiles: " + profile_name)
 
     cur.execute("DELETE FROM tag WHERE profile_id = ?", (profile_id,))
-    cur.execute("DELETE FROM stop_tag WHERE profile_id = ?", (profile_id,))
-    cur.execute("DELETE FROM min_dimension WHERE profile_id = ?", (profile_id,))
+    cur.execute("DELETE FROM dimension WHERE profile_id = ?", (profile_id,))
     cur.execute("DELETE FROM profile WHERE id = ?", (profile_id,))
+    cur.execute("DELETE FROM processed_image WHERE profile_id = ?", (profile_id,))
+    cur.execute("DELETE FROM flickr_api WHERE profile_id = ?", (profile_id,))
+    cur.execute("DELETE FROM flickr_license WHERE profile_id = ?", (profile_id,))
+    cur.execute("DELETE FROM flickr_min_timestamp WHERE profile_id = ?", (profile_id,))
     conn.commit()
     profile_id = cur.lastrowid
     conn.close()

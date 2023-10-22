@@ -13,4 +13,4 @@ def upgrade(connection):
 
 
 def downgrade(connection):
-    connection.execute('DROP TABLE min_dimension')
+    connection.execute('DROP TABLE dimension')
